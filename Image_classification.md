@@ -9,7 +9,7 @@ To reduce the number of model parameters:
 
 To enhance model performance:
 * Conv-BN-ReLU is a common way to build a block. `BatchNorm` re-scales the input for the following layer and helps stabilize training.
-```
+```python
 class ConvBN(nn.Module):
     def __init__(self, nc):
         super().__init__()
@@ -24,13 +24,13 @@ class ConvBN(nn.Module):
         return self.convbnrelu(x)
 ```
 * Dropout. Add a dropout layer before linear projections to avoid overfitting. e.g.:
-```
+```python
 nn.Flatten(),
 nn.Dropout(0.5),
 nn.Linear(432,20)
 ```
 * Residual block (skip connection) idea from ResNet. Simply define a new module that adds an identity connection for a given module:
-```
+```python
 class ResBlock(nn.Module):
     def __init__(self, module):
         super().__init__()
@@ -45,7 +45,7 @@ class ResBlock(nn.Module):
 
 Eventually, the model is defined as follows (#params=51812):
 
-```
+```python
 class SceneClassifier(torch.nn.Module):
     def __init__(self):
         super(SceneClassifier, self).__init__()
@@ -99,7 +99,7 @@ With the same setting, the validation accuracy still "shakes" across different r
 ![Training](./assets/1_train.png)
 
 Training script:
-```
+```python
 batch_size = 32
 n_epochs = 120
 learningRatse = 1e-3
@@ -141,7 +141,7 @@ train_model(batch_size, n_epochs, learningRate,
 
 Things I tried but did not help:
 * "Square padding": input images in our dataset are rectangles with varying width-height ratios. I tried to pad the shorter edge and make it square before resizing, hoping that would preserve some shape information.
-```
+```python
 class SquarePad:
     def __call__(self, image):
         max_wh = max(image.size)
@@ -152,7 +152,7 @@ class SquarePad:
 ```
 * Parameter initialization. Different initialization for different parts of the model.
 
-```
+```python
 import torch.nn.init as init
 def init_params(net):
     '''Init layer parameters.'''
